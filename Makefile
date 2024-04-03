@@ -6,7 +6,7 @@ all:
 	#INFO: Deleting euinit test applications dirs
 	rm -rf log resource_discovery etcd;
 	rm -rf inventory;
-	rm -rf catalog application_dir deployment_specs catalog_specs;
+	rm -rf catalog application_dir deployment_specs catalog_specs_test catalog_specs;
 	rm -rf doc;
 	rm -rf test_ebin;
 	#INFO: Deleting tilde files and beams
@@ -41,7 +41,7 @@ build:
 	#INFO: Deleting euinit test applications dirs
 	rm -rf log resource_discovery etcd;
 	rm -rf inventory;
-	rm -rf catalog application_dir deployment_specs catalog_specs;
+	rm -rf catalog application_dir deployment_specs catalog_specs_test catalog_specs;
 	rm -rf doc;
 	rm -rf test_ebin;
 	#INFO: Deleting tilde files and beams
@@ -70,7 +70,7 @@ clean:
 	#INFO: Deleting euinit test applications dirs
 	rm -rf log resource_discovery etcd;
 	rm -rf inventory;
-	rm -rf catalog application_dir deployment_specs catalog_specs;
+	rm -rf catalog application_dir deployment_specs catalog_specs_test catalog_specs;
 	rm -rf test_ebin;
 	#INFO: Deleting tilde files and beams
 	rm -rf *~ */*~ */*/*~;
@@ -93,7 +93,7 @@ eunit:
 	#INFO: Deleting euinit test applications dirs
 	rm -rf log resource_discovery etcd;
 	rm -rf inventory;
-	rm -rf catalog application_dir deployment_specs catalog_specs;
+	rm -rf catalog application_dir deployment_specs catalog_specs_test catalog_specs;
 	rm -rf doc;
 	rm -rf test_ebin;
 	#INFO: Deleting tilde files and beams
@@ -121,6 +121,10 @@ eunit:
 	 -I /home/joq62/erlang/include\
 	 -I ../rd_service/include\
 	 -o test_ebin ../rd_service/src/*.erl;
+	erlc -I include\
+	 -I /home/joq62/erlang/include\
+	 -I ../git_handler_service/include\
+	 -o test_ebin ../git_handler_service/src/*.erl;
 	#INFO: Creating Common applications needed for testing
 	#INFO: Compile application
 	mkdir ebin;		

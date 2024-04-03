@@ -1,0 +1,183 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Module catalog</title>
+<link rel="stylesheet" type="text/css" href="stylesheet.css" title="EDoc">
+</head>
+<body bgcolor="white">
+<div class="navbar"><a name="#navbar_top"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<hr>
+
+<h1>Module catalog</h1>
+<ul class="index"><li><a href="#description">Description</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>.
+<p>Copyright © (C) 2023, c50</p>
+
+<p><b>Behaviours:</b> <a href="gen_server.html"><tt>gen_server</tt></a>.</p>
+<p><b>Authors:</b> c50 (<a href="mailto:joq62@c50"><tt>joq62@c50</tt></a>).</p>
+
+<h2><a name="description">Description</a></h2>
+  
+<h2><a name="index">Function Index</a></h2>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#all_filenames-0">all_filenames/0</a></td><td>
+  Reads the filenames in the RepoDir.</td></tr>
+<tr><td valign="top"><a href="#clone-0">clone/0</a></td><td>.</td></tr>
+<tr><td valign="top"><a href="#delete-0">delete/0</a></td><td>
+  Reads the filenames in the RepoDir.</td></tr>
+<tr><td valign="top"><a href="#get_application_app-1">get_application_app/1</a></td><td>.</td></tr>
+<tr><td valign="top"><a href="#get_application_name-1">get_application_name/1</a></td><td>.</td></tr>
+<tr><td valign="top"><a href="#get_application_paths-1">get_application_paths/1</a></td><td>.</td></tr>
+<tr><td valign="top"><a href="#is_repo_updated-0">is_repo_updated/0</a></td><td>.</td></tr>
+<tr><td valign="top"><a href="#ping-0">ping/0</a></td><td>.</td></tr>
+<tr><td valign="top"><a href="#read_file-1">read_file/1</a></td><td>
+  Reads the filenames in the RepoDir.</td></tr>
+<tr><td valign="top"><a href="#start-0">start/0</a></td><td>.</td></tr>
+<tr><td valign="top"><a href="#start_link-0">start_link/0</a></td><td>
+  Starts the server.</td></tr>
+<tr><td valign="top"><a href="#stop-0">stop/0</a></td><td></td></tr>
+<tr><td valign="top"><a href="#update-0">update/0</a></td><td>.</td></tr>
+<tr><td valign="top"><a href="#update_git_path-1">update_git_path/1</a></td><td>.</td></tr>
+<tr><td valign="top"><a href="#update_repo-0">update_repo/0</a></td><td>.</td></tr>
+<tr><td valign="top"><a href="#update_repo_dir-1">update_repo_dir/1</a></td><td>.</td></tr>
+<tr><td valign="top"><a href="#which_filename-1">which_filename/1</a></td><td>
+  Reads the filenames in the RepoDir.</td></tr>
+</table>
+
+<h2><a name="functions">Function Details</a></h2>
+
+<h3 class="function"><a name="all_filenames-0">all_filenames/0</a></h3>
+<div class="spec">
+<p><tt>all_filenames() -&gt; {ok, FileNames::term()} | {error, Reason::term()}</tt><br></p>
+<p> </p>
+</div><p>
+  Reads the filenames in the RepoDir
+ </p>
+
+<h3 class="function"><a name="clone-0">clone/0</a></h3>
+<div class="spec">
+<p><tt>clone() -&gt; ok | {error, Reason::term()}</tt><br></p>
+<p> </p>
+</div><p>
+ 
+ </p>
+
+<h3 class="function"><a name="delete-0">delete/0</a></h3>
+<div class="spec">
+<p><tt>delete() -&gt; ok | {error, Reason::term()}</tt><br></p>
+<p> </p>
+</div><p>
+  Reads the filenames in the RepoDir
+ </p>
+
+<h3 class="function"><a name="get_application_app-1">get_application_app/1</a></h3>
+<div class="spec">
+<p><tt>get_application_app(FileName::string()) -&gt; {ok, App::atom()} | {error, Reason::term()}</tt><br></p>
+<p> </p>
+</div><p>
+ 
+ </p>
+
+<h3 class="function"><a name="get_application_name-1">get_application_name/1</a></h3>
+<div class="spec">
+<p><tt>get_application_name(FileName::string()) -&gt; {ok, ApplicationName::string()} | {error, Reason::term()}</tt><br></p>
+<p> </p>
+</div><p>
+ 
+ </p>
+
+<h3 class="function"><a name="get_application_paths-1">get_application_paths/1</a></h3>
+<div class="spec">
+<p><tt>get_application_paths(FileName::string()) -&gt; {ok, Paths::term()} | {error, Reason::term()}</tt><br></p>
+<p> </p>
+</div><p>
+ 
+ </p>
+
+<h3 class="function"><a name="is_repo_updated-0">is_repo_updated/0</a></h3>
+<div class="spec">
+<p><tt>is_repo_updated() -&gt; true | false | {error, Reason::term()}</tt><br></p>
+<p> </p>
+</div><p>
+ 
+ </p>
+
+<h3 class="function"><a name="ping-0">ping/0</a></h3>
+<div class="spec">
+<p><tt>ping() -&gt; pong | (Error::term())</tt><br></p>
+<p> </p>
+</div><p>
+ </p>
+
+<h3 class="function"><a name="read_file-1">read_file/1</a></h3>
+<div class="spec">
+<p><tt>read_file(FileName::string()) -&gt; {ok, Info::term()} | {error, Reason::term()}</tt><br></p>
+<p> </p>
+</div><p>
+  Reads the filenames in the RepoDir
+ </p>
+
+<h3 class="function"><a name="start-0">start/0</a></h3>
+<div class="spec">
+<p><tt>start() -&gt; any()</tt></p>
+<p> </p>
+</div><p>
+ 
+ </p>
+
+<h3 class="function"><a name="start_link-0">start_link/0</a></h3>
+<div class="spec">
+<p><tt>start_link() -&gt; {ok, Pid::pid()} | {error, Error::{already_started, pid()}} | {error, Error::term()} | ignore</tt><br></p>
+<p> </p>
+</div><p>
+  Starts the server</p>
+
+<h3 class="function"><a name="stop-0">stop/0</a></h3>
+<div class="spec">
+<p><tt>stop() -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="update-0">update/0</a></h3>
+<div class="spec">
+<p><tt>update() -&gt; ok | (Error::term())</tt><br></p>
+<p> </p>
+</div><p>
+ </p>
+
+<h3 class="function"><a name="update_git_path-1">update_git_path/1</a></h3>
+<div class="spec">
+<p><tt>update_git_path(GitPath::string()) -&gt; true | {error, Reason::term()}</tt><br></p>
+<p> </p>
+</div><p>
+ 
+ </p>
+
+<h3 class="function"><a name="update_repo-0">update_repo/0</a></h3>
+<div class="spec">
+<p><tt>update_repo() -&gt; ok | {error, Reason::term()}</tt><br></p>
+<p> </p>
+</div><p>
+ 
+ </p>
+
+<h3 class="function"><a name="update_repo_dir-1">update_repo_dir/1</a></h3>
+<div class="spec">
+<p><tt>update_repo_dir(RepoDir::string()) -&gt; true | {error, Reason::term()}</tt><br></p>
+<p> </p>
+</div><p>
+ 
+ </p>
+
+<h3 class="function"><a name="which_filename-1">which_filename/1</a></h3>
+<div class="spec">
+<p><tt>which_filename(App::atom()) -&gt; {ok, FileName::string()} | {error, Reason::term()}</tt><br></p>
+<p> </p>
+</div><p>
+  Reads the filenames in the RepoDir
+ </p>
+<hr>
+
+<div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<p><i>Generated by EDoc</i></p>
+</body>
+</html>
