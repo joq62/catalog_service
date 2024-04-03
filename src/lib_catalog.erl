@@ -156,8 +156,16 @@ update(RepoDir,GitPath,ApplicationDir)->
 %% 
 %% @end
 %%--------------------------------------------------------------------
-init(RepoDir,GitPath,ApplicationDir)->
+init(LocalRepoDir,GitPath,LocalApplicationDir)->
+    
     ?LOG_NOTICE("file:get_cwd ",[file:get_cwd(),?MODULE]),
+    CurrentDir=file:get_cwd(),
+    RepoDir=filename:join([CurrentDir,LocalRepoDir]),
+    ApplicationDir=filename:join([CurrentDir,LocalApplicationDir]),
+    
+    
+   
+    
     ?LOG_NOTICE("RepoDir,GitPath,ApplicationDir  ",[RepoDir,GitPath,ApplicationDir]),
     file:del_dir_r(RepoDir),
     CloneResult=rd:call(git_handler,clone,[RepoDir,GitPath],5000),
@@ -188,13 +196,18 @@ init(RepoDir,GitPath,ApplicationDir)->
 %% 
 %% @end
 %%--------------------------------------------------------------------
-update_application(FileName,CatalogRepoDir,ApplicationDir)->
+update_application(FileName,LocalCatalogRepoDir,LocalApplicationDir)->
+
+    CurrentDir=file:get_cwd(),
+    CatalogRepoDir=filename:join([CurrentDir,LocalCatalogRepoDir]),
+    ApplicationDir=filename:join([CurrentDir,LocalApplicationDir]),
+
     Result=case git_handler:read_file(CatalogRepoDir,FileName) of
 	       {ok,[Info]}->
 		   %io:format("Info,FileName ~p~n",[{Info,FileName,?MODULE,?LINE}]),
-		   RepoDir=maps:get(application_name,Info),
+		   LocalRepoDir=maps:get(application_name,Info),
 		   GitPath=maps:get(git,Info),
-		   FullRepoDir=filename:join([ApplicationDir,RepoDir]),
+		   FullRepoDir=filename:join([ApplicationDir,LocalRepoDir]),
 		   ?LOG_NOTICE("FileName,FullRepoDir,GitPath  ",[FileName,FullRepoDir,GitPath ]),
 		   case git_handler:is_repo_updated(FullRepoDir) of
 		       {error,["RepoDir doesnt exists, need to clone"]}->
