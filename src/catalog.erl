@@ -286,8 +286,6 @@ stop()-> gen_server:stop(?SERVER).
 
 init([]) ->
     
-    
-%    ?LOG_NOTICE("Server started ",[?MODULE]),
     {ok, #state{
 	    repo_dir=?RepoDir,
 	    git_path=?RepoGit,
@@ -567,12 +565,11 @@ handle_cast(UnMatchedSignal, State) ->
 	  {stop, Reason :: normal | term(), NewState :: term()}.
 
 handle_info(timeout, State) ->
-    ok=initial_trade_resources(),
-
+    initial_trade_resources(),
     RepoDir=State#state.repo_dir,
     GitPath=State#state.git_path,
     ApplicationDir=State#state.application_dir,
-    ok=try lib_catalog:init(RepoDir,GitPath,ApplicationDir) of
+    Result=try lib_catalog:init(RepoDir,GitPath,ApplicationDir) of
 	   ok->
 	       ok;
 	   {error,Reason}->
@@ -581,7 +578,10 @@ handle_info(timeout, State) ->
 	   Event:Reason:Stacktrace ->
 	       {Event,Reason,Stacktrace,?MODULE,?LINE}
        end,
+    
     spawn(fun()->lib_catalog:timer_to_call_update(?Interval) end),
+    ?LOG_NOTICE("Result init",[Result]),
+    ?LOG_NOTICE("Server started ",[?MODULE]),
     {noreply, State};
 
 

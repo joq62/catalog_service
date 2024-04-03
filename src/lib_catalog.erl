@@ -159,7 +159,7 @@ init(RepoDir,GitPath,ApplicationDir)->
     file:del_dir_r(RepoDir),
     ok=rd:call(git_handler,clone,[RepoDir,GitPath],5000),
     file:del_dir_r(ApplicationDir),
-    file:make_dir(ApplicationDir),
+    ok=file:make_dir(ApplicationDir),
     {ok,AllFileNames}=rd:call(git_handler,all_filenames,[RepoDir],5000),
     R=[{update_application(FileName,RepoDir,ApplicationDir),FileName}||FileName<-AllFileNames],
     []=[{X,FileName}||{X,FileName}<-R,
