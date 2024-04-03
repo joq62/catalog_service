@@ -157,6 +157,7 @@ update(RepoDir,GitPath,ApplicationDir)->
 %% @end
 %%--------------------------------------------------------------------
 init(RepoDir,GitPath,ApplicationDir)->
+    ?LOG_NOTICE("file:get_cwd ",[file:get_cwd(),?MODULE]),
     ?LOG_NOTICE("RepoDir,GitPath,ApplicationDir  ",[RepoDir,GitPath,ApplicationDir]),
     file:del_dir_r(RepoDir),
     CloneResult=rd:call(git_handler,clone,[RepoDir,GitPath],5000),
