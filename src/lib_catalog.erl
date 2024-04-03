@@ -249,5 +249,5 @@ update_application_v1(FileName,CatalogRepoDir,ApplicationDir)->
 	       Error->
 		   {error,Error}
 	  end,
-    ?LOG_NOTICE("FileName,CatalogRepoDir,ApplicationDir,Result  ",[FileName,CatalogRepoDir,ApplicationDir,Result]),
+   
     Result.
