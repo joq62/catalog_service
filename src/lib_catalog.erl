@@ -37,6 +37,7 @@
 %% 
 %% @end
 %%--------------------------------------------------------------------
+
 start(LocalRepoDir,GitPath,LocalApplicationDir)->
     io:format(" START Reconcilaition ******************** ~p~n",[{?ReconciliationInterval,?MODULE,?FUNCTION_NAME,?LINE}]),
     timer:sleep(?ReconciliationInterval),
@@ -46,6 +47,7 @@ start(LocalRepoDir,GitPath,LocalApplicationDir)->
     update(RepoDir,GitPath,ApplicationDir),
     io:format(" END Reconcilaition ========================== ~p~n",[{?MODULE,?FUNCTION_NAME,?LINE}]),
     rpc:cast(node(),catalog,reconciliate,[]).
+
 %%--------------------------------------------------------------------
 %% @doc
 %% 
@@ -148,10 +150,13 @@ update(RepoDir,GitPath,ApplicationDir)->
     io:format(" ~p~n",[{?MODULE,?FUNCTION_NAME,?LINE}]),
     case git_handler:is_repo_updated(RepoDir) of
 	{error,["RepoDir doesnt exists, need to clone"]}->
-	    ok=git_handler:clone(RepoDir,GitPath);
+	    GitClone=git_handler:clone(RepoDir,GitPath),
+	    io:format("RepoDir doesnt exists, need to clone ~p~n",[{GitClone,?MODULE,?FUNCTION_NAME,?LINE}]),
+	    GitClone;
 	false ->
-	    io:format(" ~p~n",[{?MODULE,?FUNCTION_NAME,?LINE}]),
-	    ok=git_handler:update_repo(RepoDir);
+	    GitUpdate=git_handler:update_repo(RepoDir),
+	    io:format("GitUpdate ~p~n",[{GitUpdate,?MODULE,?FUNCTION_NAME,?LINE}]),
+	    GitUpdate;
 	true ->
 	    ok
     end,
