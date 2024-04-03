@@ -38,7 +38,7 @@
 %% @end
 %%--------------------------------------------------------------------
 get_application_name(CatalogRepoDir,FileName)->
-    Result=case git_handler:read_file(CatalogRepoDir,FileName) of
+    Result=case rd:call(git_handler,read_file,[CatalogRepoDir,FileName],5000) of
 	       {ok,[Info]}->
 		   ApplicationName=maps:get(application_name,Info),
 		   {ok,ApplicationName};
@@ -53,7 +53,7 @@ get_application_name(CatalogRepoDir,FileName)->
 %% @end
 %%--------------------------------------------------------------------
 get_application_app(CatalogRepoDir,FileName)->
-    Result=case git_handler:read_file(CatalogRepoDir,FileName) of
+    Result=case rd:call(git_handler,read_file,[CatalogRepoDir,FileName],5000) of
 	       {ok,[Info]}->
 		   App=maps:get(app,Info),
 		   {ok,App};
@@ -68,7 +68,7 @@ get_application_app(CatalogRepoDir,FileName)->
 %% @end
 %%--------------------------------------------------------------------
 get_application_paths(CatalogRepoDir,ApplicationDir,FileName)->
-    Result=case git_handler:read_file(CatalogRepoDir,FileName) of
+    Result=case rd:call(git_handler,read_file,[CatalogRepoDir,FileName],5000) of
 	       {ok,[Info]}->
 		   %io:format("Info,FileName ~p~n",[{Info,FileName,?MODULE,?LINE}]),
 		   RepoDir=maps:get(application_name,Info),
@@ -92,7 +92,7 @@ get_application_paths(CatalogRepoDir,ApplicationDir,FileName)->
 %% @end
 %%--------------------------------------------------------------------
 which_filename(RepoDir,App)->
-    {ok,AllFileNames}=git_handler:all_filenames(RepoDir),
+    {ok,AllFileNames}=rd:call(git_handler,all_filenames,[RepoDir],5000),
     find_filename(AllFileNames,RepoDir,App).
 
 find_filename(AllFileNames,RepoDir,App)->
@@ -103,7 +103,7 @@ find_filename(_AllFileNames,_RepoDir,_App,{ok,FileName})->
 find_filename([],_RepoDir,_App,Found)->
     Found;
 find_filename([FileName|T],RepoDir,App,false)->
-    {ok,[Map]}=git_handler:read_file(RepoDir,FileName),
+    {ok,[Map]}=rd:call(git_handler,read_file,[RepoDir,FileName],5000),
     NewAcc=case maps:get(app,Map) of
 	       App->
 		   {ok,FileName};
@@ -129,12 +129,12 @@ timer_to_call_update(Interval)->
 %%--------------------------------------------------------------------
 update(RepoDir,GitPath,ApplicationDir)->
     io:format(" ~p~n",[{?MODULE,?FUNCTION_NAME,?LINE}]),
-    case git_handler:is_repo_updated(RepoDir) of
+    case rd:call(git_handler,is_repo_updated,[RepoDir],5000) of
 	{error,["RepoDir doesnt exists, need to clone"]}->
-	    ok=git_handler:clone(RepoDir,GitPath);
+	    ok=rd:call(git_handler,clone,[RepoDir,GitPath],5000);
 	false ->
 	    io:format(" ~p~n",[{?MODULE,?FUNCTION_NAME,?LINE}]),
-	    ok=git_handler:update_repo(RepoDir);
+	    ok=rd:call(git_handler,update_repo,[RepoDir],5000);
 	true ->
 	    ok
     end,
@@ -144,7 +144,7 @@ update(RepoDir,GitPath,ApplicationDir)->
 	true->
 	    ok
     end,
-    {ok,AllFileNames}=git_handler:all_filenames(RepoDir),
+    {ok,AllFileNames}=rd:call(git_handler,all_filenames,[RepoDir],5000),
     R=[{update_application(FileName,RepoDir,ApplicationDir),FileName}||FileName<-AllFileNames],
     []=[{X,FileName}||{X,FileName}<-R,
 		      ok=/=X],
@@ -176,7 +176,7 @@ init(LocalRepoDir,GitPath,LocalApplicationDir)->
     file:del_dir_r(ApplicationDir),
     MakeDirResult=file:make_dir(ApplicationDir),
     ?LOG_NOTICE("MakeDirResult  ",[MakeDirResult]),
-    {ok,AllFileNames}=git_handler:all_filenames(RepoDir),
+    {ok,AllFileNames}=rd:call(git_handler,all_filenames,[RepoDir],5000),
     ?LOG_NOTICE("AllFileNames  ",[AllFileNames]),
     R=[{update_application(FileName,RepoDir,ApplicationDir),FileName}||FileName<-AllFileNames],
      ?LOG_NOTICE("UpdateResult  ",[R]),
@@ -238,11 +238,11 @@ update_application_v1(FileName,CatalogRepoDir,ApplicationDir)->
 		   GitPath=maps:get(git,Info),
 		   FullRepoDir=filename:join([ApplicationDir,RepoDir]),
 		   ?LOG_NOTICE("FileName,FullRepoDir,GitPath  ",[FileName,FullRepoDir,GitPath ]),
-		   case git_handler:is_repo_updated(FullRepoDir) of
+		   case rd:call(git_handler,is_repo_updated,[FullRepoDir],5000) of
 		       {error,["RepoDir doesnt exists, need to clone"]}->
-			  git_handler:clone(FullRepoDir,GitPath);
+			  rd:call(git_handler,clone,[FullRepoDir,GitPath],5000);
 		       false ->
-			  git_handler:update_repo(FullRepoDir);
+			  rd:call(git_handler,update_repo,[FullRepoDir],5000);
 		       true ->
 			   ok
 		   end;
