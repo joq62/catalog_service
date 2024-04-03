@@ -92,10 +92,10 @@ get_application_paths(CatalogRepoDir,ApplicationDir,FileName)->
 %% @end
 %%--------------------------------------------------------------------
 which_filename(RepoDir,App)->
-    ?LOG_NOTICE("which_filename  ",[RepoDir,App]),
+  %  ?LOG_NOTICE("which_filename  ",[RepoDir,App]),
     {ok,AllFileNames}=git_handler:all_filenames(RepoDir),
     Result=find_filename(AllFileNames,RepoDir,App),
-    ?LOG_NOTICE("which_filename Result ",[Result]),
+  %  ?LOG_NOTICE("which_filename Result ",[Result]),
     Result.
 
 find_filename(AllFileNames,RepoDir,App)->
