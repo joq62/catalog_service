@@ -158,6 +158,7 @@ update(RepoDir,GitPath,ApplicationDir)->
 	    io:format("GitUpdate ~p~n",[{GitUpdate,?MODULE,?FUNCTION_NAME,?LINE}]),
 	    GitUpdate;
 	true ->
+	    io:format("IS updated ~p~n",[{?MODULE,?FUNCTION_NAME,?LINE}]),
 	    ok
     end,
     case filelib:is_dir(ApplicationDir) of
