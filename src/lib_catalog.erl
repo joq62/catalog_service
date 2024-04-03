@@ -162,6 +162,10 @@ init(RepoDir,GitPath,ApplicationDir)->
     file:del_dir_r(RepoDir),
     CloneResult=rd:call(git_handler,clone,[RepoDir,GitPath],5000),
     ?LOG_NOTICE("Clone result  ",[CloneResult]),
+
+    init:stop(),
+    timer:sleep(2000),
+
     file:del_dir_r(ApplicationDir),
     MakeDirResult=file:make_dir(ApplicationDir),
     ?LOG_NOTICE("MakeDirResult  ",[MakeDirResult]),
