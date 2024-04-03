@@ -190,6 +190,7 @@ update_application(FileName,CatalogRepoDir,ApplicationDir)->
 		   RepoDir=maps:get(application_name,Info),
 		   GitPath=maps:get(git,Info),
 		   FullRepoDir=filename:join([ApplicationDir,RepoDir]),
+		   ?LOG_NOTICE("FileName,FullRepoDir,GitPath  ",[FileName,FullRepoDir,GitPath ]),
 		   case rd:call(git_handler,is_repo_updated,[FullRepoDir],5000) of
 		       {error,["RepoDir doesnt exists, need to clone"]}->
 			  rd:call(git_handler,clone,[FullRepoDir,GitPath],5000);
