@@ -185,6 +185,36 @@ init(RepoDir,GitPath,ApplicationDir)->
 %% @end
 %%--------------------------------------------------------------------
 update_application(FileName,CatalogRepoDir,ApplicationDir)->
+    Result=case git_handler:read_file(CatalogRepoDir,FileName) of
+	       {ok,[Info]}->
+		   %io:format("Info,FileName ~p~n",[{Info,FileName,?MODULE,?LINE}]),
+		   RepoDir=maps:get(application_name,Info),
+		   GitPath=maps:get(git,Info),
+		   FullRepoDir=filename:join([ApplicationDir,RepoDir]),
+		   ?LOG_NOTICE("FileName,FullRepoDir,GitPath  ",[FileName,FullRepoDir,GitPath ]),
+		   case git_handler:is_repo_updated(FullRepoDir) of
+		       {error,["RepoDir doesnt exists, need to clone"]}->
+			   CloneR=git_handler:clone(FullRepoDir,GitPath),
+			   ?LOG_NOTICE("CloneR",[CloneR]),
+			   CloneR;
+		       false ->
+			   UpdateR=git_handler:update_repo(FullRepoDir),
+			   ?LOG_NOTICE("UpdateR",[UpdateR]),
+			   UpdateR;
+		       true ->
+			   ok
+		   end;
+	       Error->
+		   {error,Error}
+	   end,
+    Result.
+
+%%--------------------------------------------------------------------
+%% @doc
+%% 
+%% @end
+%%--------------------------------------------------------------------
+update_application_v1(FileName,CatalogRepoDir,ApplicationDir)->
     Result=case rd:call(git_handler,read_file,[CatalogRepoDir,FileName],5000) of
 	       {ok,[Info]}->
 		   %io:format("Info,FileName ~p~n",[{Info,FileName,?MODULE,?LINE}]),
