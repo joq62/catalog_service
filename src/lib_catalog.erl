@@ -199,5 +199,5 @@ update_application(FileName,CatalogRepoDir,ApplicationDir)->
 	       Error->
 		   {error,Error}
 	  end,
-    ?LOG_NOTICE("Result  ",[Result]),
+    ?LOG_NOTICE("FileName,CatalogRepoDir,ApplicationDir,Result  ",[FileName,CatalogRepoDir,ApplicationDir,Result]),
     Result.
