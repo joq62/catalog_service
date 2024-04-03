@@ -8,6 +8,7 @@
 %%%-------------------------------------------------------------------
 -module(lib_catalog).
   
+-include("log.api").
 -include("catalog.hrl").
 
  
@@ -157,11 +158,14 @@ update(RepoDir,GitPath,ApplicationDir)->
 %%--------------------------------------------------------------------
 init(RepoDir,GitPath,ApplicationDir)->
     file:del_dir_r(RepoDir),
-    ok=rd:call(git_handler,clone,[RepoDir,GitPath],5000),
+    CloneResult=rd:call(git_handler,clone,[RepoDir,GitPath],5000),
+    ?LOG_NOTICE("Clone result  ",[CloneResult]),
     file:del_dir_r(ApplicationDir),
     ok=file:make_dir(ApplicationDir),
     {ok,AllFileNames}=rd:call(git_handler,all_filenames,[RepoDir],5000),
+    ?LOG_NOTICE("AllFileNames  ",[AllFileNames]),
     R=[{update_application(FileName,RepoDir,ApplicationDir),FileName}||FileName<-AllFileNames],
+    
     []=[{X,FileName}||{X,FileName}<-R,
 		      ok=/=X],
     ok.
@@ -195,4 +199,5 @@ update_application(FileName,CatalogRepoDir,ApplicationDir)->
 	       Error->
 		   {error,Error}
 	  end,
+    ?LOG_NOTICE("Result  ",[Result]),
     Result.
