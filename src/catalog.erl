@@ -412,6 +412,7 @@ handle_call({is_repo_updated}, _From, State) ->
 
 
 handle_call({which_filename,App}, _From, State) ->
+    ?LOG_NOTICE("which application  ",[App]),
     RepoDir=State#state.repo_dir,
     Result=try lib_catalog:which_filename(RepoDir,App) of 
 	       {ok,R}->
