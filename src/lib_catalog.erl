@@ -157,15 +157,17 @@ update(RepoDir,GitPath,ApplicationDir)->
 %% @end
 %%--------------------------------------------------------------------
 init(RepoDir,GitPath,ApplicationDir)->
+    ?LOG_NOTICE("RepoDir,GitPath,ApplicationDir  ",[RepoDir,GitPath,ApplicationDir]),
     file:del_dir_r(RepoDir),
     CloneResult=rd:call(git_handler,clone,[RepoDir,GitPath],5000),
     ?LOG_NOTICE("Clone result  ",[CloneResult]),
     file:del_dir_r(ApplicationDir),
-    ok=file:make_dir(ApplicationDir),
+    MakeDirResult=file:make_dir(ApplicationDir),
+    ?LOG_NOTICE("MakeDirResult  ",[MakeDirResult]),
     {ok,AllFileNames}=rd:call(git_handler,all_filenames,[RepoDir],5000),
     ?LOG_NOTICE("AllFileNames  ",[AllFileNames]),
     R=[{update_application(FileName,RepoDir,ApplicationDir),FileName}||FileName<-AllFileNames],
-    
+     ?LOG_NOTICE("UpdateResult  ",[R]),
     []=[{X,FileName}||{X,FileName}<-R,
 		      ok=/=X],
     ok.
