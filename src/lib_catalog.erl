@@ -14,7 +14,7 @@
  
 %% API
 -export([
-	 
+	 start/3,
 	 init/3,
 	 update/3,
 	 which_filename/2,
@@ -32,6 +32,20 @@
 %%%===================================================================
 %%% API
 %%%===================================================================
+%%--------------------------------------------------------------------
+%% @doc
+%% 
+%% @end
+%%--------------------------------------------------------------------
+start(LocalRepoDir,GitPath,LocalApplicationDir)->
+    io:format(" START Reconcilaition ******************** ~p~n",[{?ReconciliationInterval,?MODULE,?FUNCTION_NAME,?LINE}]),
+    timer:sleep(?ReconciliationInterval),
+    {ok,CurrentDir}=file:get_cwd(),
+    RepoDir=filename:join([CurrentDir,LocalRepoDir]),
+    ApplicationDir=filename:join([CurrentDir,LocalApplicationDir]),
+    update(RepoDir,GitPath,ApplicationDir),
+    io:format(" END Reconcilaition ========================== ~p~n",[{?MODULE,?FUNCTION_NAME,?LINE}]),
+    rpc:cast(node(),catalog,reconciliate,[]).
 %%--------------------------------------------------------------------
 %% @doc
 %% 
@@ -161,7 +175,7 @@ update(RepoDir,GitPath,ApplicationDir)->
 %%--------------------------------------------------------------------
 init(LocalRepoDir,GitPath,LocalApplicationDir)->
     
-    ?LOG_NOTICE("file:get_cwd ",[file:get_cwd(),?MODULE]),
+ %   ?LOG_NOTICE("file:get_cwd ",[file:get_cwd(),?MODULE]),
     {ok,CurrentDir}=file:get_cwd(),
     RepoDir=filename:join([CurrentDir,LocalRepoDir]),
     ApplicationDir=filename:join([CurrentDir,LocalApplicationDir]),
@@ -169,20 +183,18 @@ init(LocalRepoDir,GitPath,LocalApplicationDir)->
     
    
     
-    ?LOG_NOTICE("RepoDir,GitPath,ApplicationDir  ",[RepoDir,GitPath,ApplicationDir]),
+ %   ?LOG_NOTICE("RepoDir,GitPath,ApplicationDir  ",[RepoDir,GitPath,ApplicationDir]),
     file:del_dir_r(RepoDir),
     CloneResult=git_handler:clone(RepoDir,GitPath),
     ?LOG_NOTICE("Clone result  ",[CloneResult]),
-    
-    timer:sleep(2000),
-    
+        
     file:del_dir_r(ApplicationDir),
     MakeDirResult=file:make_dir(ApplicationDir),
-    ?LOG_NOTICE("MakeDirResult  ",[MakeDirResult]),
+ %   ?LOG_NOTICE("MakeDirResult  ",[MakeDirResult]),
     {ok,AllFileNames}=git_handler:all_filenames(RepoDir),
-    ?LOG_NOTICE("AllFileNames  ",[AllFileNames]),
+ %   ?LOG_NOTICE("AllFileNames  ",[AllFileNames]),
     R=[{update_application(FileName,RepoDir,ApplicationDir),FileName}||FileName<-AllFileNames],
-     ?LOG_NOTICE("UpdateResult  ",[R]),
+ %    ?LOG_NOTICE("UpdateResult  ",[R]),
     []=[{X,FileName}||{X,FileName}<-R,
 		      ok=/=X],
     ok.
@@ -210,7 +222,7 @@ update_application(FileName,LocalCatalogRepoDir,LocalApplicationDir)->
 		   LocalRepoDir=maps:get(application_name,Info),
 		   GitPath=maps:get(git,Info),
 		   FullRepoDir=filename:join([ApplicationDir,LocalRepoDir]),
-		   ?LOG_NOTICE("FileName,FullRepoDir,GitPath  ",[FileName,FullRepoDir,GitPath ]),
+	%	   ?LOG_NOTICE("FileName,FullRepoDir,GitPath  ",[FileName,FullRepoDir,GitPath ]),
 		   case git_handler:is_repo_updated(FullRepoDir) of
 		       {error,["RepoDir doesnt exists, need to clone"]}->
 			   CloneR=git_handler:clone(FullRepoDir,GitPath),
@@ -240,7 +252,7 @@ update_application_v1(FileName,CatalogRepoDir,ApplicationDir)->
 		   RepoDir=maps:get(application_name,Info),
 		   GitPath=maps:get(git,Info),
 		   FullRepoDir=filename:join([ApplicationDir,RepoDir]),
-		   ?LOG_NOTICE("FileName,FullRepoDir,GitPath  ",[FileName,FullRepoDir,GitPath ]),
+	%	   ?LOG_NOTICE("FileName,FullRepoDir,GitPath  ",[FileName,FullRepoDir,GitPath ]),
 		   case git_handler:is_repo_updated(FullRepoDir) of
 		       {error,["RepoDir doesnt exists, need to clone"]}->
 			  git_handler:clone(FullRepoDir,GitPath);

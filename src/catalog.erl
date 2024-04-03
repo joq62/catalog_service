@@ -23,6 +23,7 @@
 %% API
 
 -export([
+	 reconciliate/0,
 	 all_filenames/0,
 	 read_file/1,
 	 which_filename/1,
@@ -73,6 +74,17 @@
 %%%===================================================================
 %%% API
 %%%===================================================================
+%%--------------------------------------------------------------------
+%% @doc
+%% This a loop that starts after the interval ReconcilationInterval 
+%% The loop checks what to start or stop 
+%% 
+%% @end
+%%--------------------------------------------------------------------
+-spec reconciliate() -> 
+	  ok .
+reconciliate() ->
+    gen_server:cast(?SERVER,{reconciliate}).
 
 
 %%--------------------------------------------------------------------
@@ -510,7 +522,7 @@ handle_call({update}, _From, State) ->
 	  end,
 
    % io:format("get all filenames ~p~n",[{rd:call(git_handler,all_filenames,[RepoDir],5000),?MODULE,?LINE}]),
-    spawn(fun()->lib_catalog:timer_to_call_update(?Interval) end),
+    spawn(fun()->lib_catalog:start(RepoDir,GitPath,ApplicationDir) end),
     {reply, Reply, State};
 
 
@@ -544,6 +556,13 @@ handle_call(UnMatchedSignal, From, State) ->
 %% Handling cast messages
 %% @end
 %%--------------------------------------------------------------------
+handle_cast({reconciliate}, State) ->
+    RepoDir=State#state.repo_dir,
+    GitPath=State#state.git_path,
+    ApplicationDir=State#state.application_dir,
+    spawn(fun()->lib_catalog:start(RepoDir,GitPath,ApplicationDir) end),
+    {noreply, State};
+
 
 handle_cast({stop}, State) ->
     
@@ -580,7 +599,7 @@ handle_info(timeout, State) ->
 	       {Event,Reason,Stacktrace,?MODULE,?LINE}
        end,
     
-    spawn(fun()->lib_catalog:timer_to_call_update(?Interval) end),
+    spawn(fun()->lib_catalog:start(RepoDir,GitPath,ApplicationDir) end),
     ?LOG_NOTICE("Result init",[Result]),
     ?LOG_NOTICE("Server started ",[?MODULE]),
     {noreply, State};
