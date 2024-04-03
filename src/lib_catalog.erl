@@ -159,7 +159,7 @@ update(RepoDir,GitPath,ApplicationDir)->
 init(LocalRepoDir,GitPath,LocalApplicationDir)->
     
     ?LOG_NOTICE("file:get_cwd ",[file:get_cwd(),?MODULE]),
-    CurrentDir=file:get_cwd(),
+    {ok,CurrentDir}=file:get_cwd(),
     RepoDir=filename:join([CurrentDir,LocalRepoDir]),
     ApplicationDir=filename:join([CurrentDir,LocalApplicationDir]),
     
@@ -198,7 +198,7 @@ init(LocalRepoDir,GitPath,LocalApplicationDir)->
 %%--------------------------------------------------------------------
 update_application(FileName,LocalCatalogRepoDir,LocalApplicationDir)->
 
-    CurrentDir=file:get_cwd(),
+    {ok,CurrentDir}=file:get_cwd(),
     CatalogRepoDir=filename:join([CurrentDir,LocalCatalogRepoDir]),
     ApplicationDir=filename:join([CurrentDir,LocalApplicationDir]),
 
