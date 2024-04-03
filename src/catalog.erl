@@ -313,7 +313,7 @@ init([]) ->
 
 handle_call({all_filenames}, _From, State) ->
     RepoDir=State#state.repo_dir,
-    Result=try rd:call(git_handler,all_filenames,[RepoDir],5000) of
+    Result=try git_handler:all_filenames(RepoDir) of
 	       {ok,R}->
 		    {ok,R};
 	       Error->
@@ -333,7 +333,7 @@ handle_call({all_filenames}, _From, State) ->
 
 handle_call({read_file,FileName}, _From, State) ->
     RepoDir=State#state.repo_dir,
-    Result=try rd:call(git_handler,read_file,[RepoDir,FileName],5000) of
+    Result=try git_handler:read_file(RepoDir,FileName) of
 	       {ok,R}->
 		    {ok,R};
 	       Error->
@@ -352,7 +352,7 @@ handle_call({read_file,FileName}, _From, State) ->
 
 handle_call({update_repo}, _From, State) ->
     RepoDir=State#state.repo_dir,
-    Result=try rd:call(git_handler,update_repo,[RepoDir],5000) of 
+    Result=try git_handler:update_repo(RepoDir) of 
 	       {ok,R}->
 		   {ok,R};
 	       Error->
@@ -372,7 +372,7 @@ handle_call({update_repo}, _From, State) ->
 handle_call({clone}, _From, State) ->
     RepoDir=State#state.repo_dir,
     GitPath=State#state.git_path,
-    Result=try rd:call(git_handler,clone,[RepoDir,GitPath],5000) of 
+    Result=try git_handler:clone(RepoDir,GitPath) of 
 	       ok->
 		   ok;
 	       Error->
@@ -392,7 +392,7 @@ handle_call({clone}, _From, State) ->
   
 handle_call({is_repo_updated}, _From, State) ->
     RepoDir=State#state.repo_dir,
-    Result=try rd:call(git_handler,is_repo_updated,[RepoDir],5000) of 
+    Result=try git_handler:is_repo_updated(RepoDir) of 
 	       {ok,R}->
 		   {ok,R};
 	       Error->
