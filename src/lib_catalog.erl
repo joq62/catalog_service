@@ -39,13 +39,13 @@
 %%--------------------------------------------------------------------
 
 start(LocalRepoDir,GitPath,LocalApplicationDir)->
-    io:format(" START Reconcilaition ******************** ~p~n",[{?ReconciliationInterval,?MODULE,?FUNCTION_NAME,?LINE}]),
+  %  io:format(" START Reconcilaition ******************** ~p~n",[{??MODULE,?FUNCTION_NAME,?LINE}]),
     timer:sleep(?ReconciliationInterval),
     {ok,CurrentDir}=file:get_cwd(),
     RepoDir=filename:join([CurrentDir,LocalRepoDir]),
     ApplicationDir=filename:join([CurrentDir,LocalApplicationDir]),
     update(RepoDir,GitPath,ApplicationDir),
-    io:format(" END Reconcilaition ========================== ~p~n",[{?MODULE,?FUNCTION_NAME,?LINE}]),
+  %  io:format(" END Reconcilaition ========================== ~p~n",[{?MODULE,?FUNCTION_NAME,?LINE}]),
     rpc:cast(node(),catalog,reconciliate,[]).
 
 %%--------------------------------------------------------------------
@@ -97,6 +97,7 @@ get_application_paths(CatalogRepoDir,ApplicationDir,FileName)->
 			   {ok,[Ebin,Priv]}
 		   end;
 	       Error->
+		   ?LOG_WARNING("Failed git_handler:read_file ",[CatalogRepoDir,FileName,Error]),
 		   {error,Error}
 	   end,
     Result.
@@ -108,10 +109,8 @@ get_application_paths(CatalogRepoDir,ApplicationDir,FileName)->
 %% @end
 %%--------------------------------------------------------------------
 which_filename(RepoDir,App)->
-  %  ?LOG_NOTICE("which_filename  ",[RepoDir,App]),
     {ok,AllFileNames}=git_handler:all_filenames(RepoDir),
     Result=find_filename(AllFileNames,RepoDir,App),
-  %  ?LOG_NOTICE("which_filename Result ",[Result]),
     Result.
 
 find_filename(AllFileNames,RepoDir,App)->
@@ -147,18 +146,17 @@ timer_to_call_update(Interval)->
 %% @end
 %%--------------------------------------------------------------------
 update(RepoDir,GitPath,ApplicationDir)->
-    io:format(" ~p~n",[{?MODULE,?FUNCTION_NAME,?LINE}]),
     case git_handler:is_repo_updated(RepoDir) of
 	{error,["RepoDir doesnt exists, need to clone"]}->
 	    GitClone=git_handler:clone(RepoDir,GitPath),
-	    io:format("RepoDir doesnt exists, need to clone ~p~n",[{GitClone,?MODULE,?FUNCTION_NAME,?LINE}]),
+	    ?LOG_NOTICE("No Gitrepo- Cloned with result ",[GitClone]),
+	    %io:format("RepoDir doesnt exists, need to clone ~p~n",[{GitClone,?MODULE,?FUNCTION_NAME,?LINE}]),
 	    GitClone;
 	false ->
 	    GitUpdate=git_handler:update_repo(RepoDir),
-	    io:format("GitUpdate ~p~n",[{GitUpdate,?MODULE,?FUNCTION_NAME,?LINE}]),
+	    ?LOG_NOTICE("Gitrepo not updated - Update repor with result ",[GitUpdate]),
 	    GitUpdate;
 	true ->
-	    io:format("IS updated ~p~n",[{?MODULE,?FUNCTION_NAME,?LINE}]),
 	    ok
     end,
     case filelib:is_dir(ApplicationDir) of
@@ -180,27 +178,16 @@ update(RepoDir,GitPath,ApplicationDir)->
 %% @end
 %%--------------------------------------------------------------------
 init(LocalRepoDir,GitPath,LocalApplicationDir)->
-    
- %   ?LOG_NOTICE("file:get_cwd ",[file:get_cwd(),?MODULE]),
     {ok,CurrentDir}=file:get_cwd(),
     RepoDir=filename:join([CurrentDir,LocalRepoDir]),
     ApplicationDir=filename:join([CurrentDir,LocalApplicationDir]),
-    
-    
-   
-    
- %   ?LOG_NOTICE("RepoDir,GitPath,ApplicationDir  ",[RepoDir,GitPath,ApplicationDir]),
     file:del_dir_r(RepoDir),
     CloneResult=git_handler:clone(RepoDir,GitPath),
-    ?LOG_NOTICE("Clone result  ",[CloneResult]),
-        
+    ?LOG_NOTICE("Initial clone with result ",[CloneResult]),
     file:del_dir_r(ApplicationDir),
     MakeDirResult=file:make_dir(ApplicationDir),
- %   ?LOG_NOTICE("MakeDirResult  ",[MakeDirResult]),
     {ok,AllFileNames}=git_handler:all_filenames(RepoDir),
- %   ?LOG_NOTICE("AllFileNames  ",[AllFileNames]),
     R=[{update_application(FileName,RepoDir,ApplicationDir),FileName}||FileName<-AllFileNames],
- %    ?LOG_NOTICE("UpdateResult  ",[R]),
     []=[{X,FileName}||{X,FileName}<-R,
 		      ok=/=X],
     ok.
@@ -221,54 +208,26 @@ update_application(FileName,LocalCatalogRepoDir,LocalApplicationDir)->
     {ok,CurrentDir}=file:get_cwd(),
     CatalogRepoDir=filename:join([CurrentDir,LocalCatalogRepoDir]),
     ApplicationDir=filename:join([CurrentDir,LocalApplicationDir]),
-
     Result=case git_handler:read_file(CatalogRepoDir,FileName) of
 	       {ok,[Info]}->
 		   %io:format("Info,FileName ~p~n",[{Info,FileName,?MODULE,?LINE}]),
 		   LocalRepoDir=maps:get(application_name,Info),
 		   GitPath=maps:get(git,Info),
 		   FullRepoDir=filename:join([ApplicationDir,LocalRepoDir]),
-	%	   ?LOG_NOTICE("FileName,FullRepoDir,GitPath  ",[FileName,FullRepoDir,GitPath ]),
 		   case git_handler:is_repo_updated(FullRepoDir) of
 		       {error,["RepoDir doesnt exists, need to clone"]}->
-			   CloneR=git_handler:clone(FullRepoDir,GitPath),
-			   ?LOG_NOTICE("CloneR",[CloneR]),
-			   CloneR;
+			   GitClone=git_handler:clone(FullRepoDir,GitPath),
+			   ?LOG_NOTICE("No Gitrepo for application - Cloned with result ",[LocalRepoDir,GitClone]),
+			   GitClone;
 		       false ->
-			   UpdateR=git_handler:update_repo(FullRepoDir),
-			   ?LOG_NOTICE("UpdateR",[UpdateR]),
-			   UpdateR;
+			   GitUpdate=git_handler:update_repo(FullRepoDir),
+			   ?LOG_NOTICE("Application Gitrepo not updated - Update repor with result ",[GitUpdate]),
+			   GitUpdate;
 		       true ->
 			   ok
 		   end;
 	       Error->
+		   ?LOG_WARNING("Failed git_handler:read_file ",[CatalogRepoDir,FileName,Error]),
 		   {error,Error}
 	   end,
-    Result.
-
-%%--------------------------------------------------------------------
-%% @doc
-%% 
-%% @end
-%%--------------------------------------------------------------------
-update_application_v1(FileName,CatalogRepoDir,ApplicationDir)->
-    Result=case git_handler:read_file(CatalogRepoDir,FileName) of
-	       {ok,[Info]}->
-		   %io:format("Info,FileName ~p~n",[{Info,FileName,?MODULE,?LINE}]),
-		   RepoDir=maps:get(application_name,Info),
-		   GitPath=maps:get(git,Info),
-		   FullRepoDir=filename:join([ApplicationDir,RepoDir]),
-	%	   ?LOG_NOTICE("FileName,FullRepoDir,GitPath  ",[FileName,FullRepoDir,GitPath ]),
-		   case git_handler:is_repo_updated(FullRepoDir) of
-		       {error,["RepoDir doesnt exists, need to clone"]}->
-			  git_handler:clone(FullRepoDir,GitPath);
-		       false ->
-			  git_handler:update_repo(FullRepoDir);
-		       true ->
-			   ok
-		   end;
-	       Error->
-		   {error,Error}
-	  end,
-   
     Result.

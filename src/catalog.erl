@@ -589,14 +589,15 @@ handle_info(timeout, State) ->
     GitPath=State#state.git_path,
     ApplicationDir=State#state.application_dir,
     Result=try lib_catalog:init(RepoDir,GitPath,ApplicationDir) of
-	   ok->
-	       ok;
-	   {error,Reason}->
-	       {error,Reason}
-       catch
-	   Event:Reason:Stacktrace ->
-	       {Event,Reason,Stacktrace,?MODULE,?LINE}
-       end,
+	       ok->
+		   
+		   ok;
+	       {error,Reason}->
+		   {error,Reason}
+	   catch
+	       Event:Reason:Stacktrace ->
+		   {Event,Reason,Stacktrace,?MODULE,?LINE}
+	   end,
     
     spawn(fun()->lib_catalog:start(RepoDir,GitPath,ApplicationDir) end),
     ?LOG_NOTICE("Result init",[Result]),
