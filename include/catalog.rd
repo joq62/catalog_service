@@ -4,4 +4,4 @@
 -define(LocalResourceTuples,[{catalog,{catalog,node()}}]).
 
 %% I want following resource types
--define(TargetTypes,[git_handler]). 
+-define(TargetTypes,[log2,git_handler]). 
