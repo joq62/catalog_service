@@ -545,6 +545,7 @@ handle_call({ping}, _From, State) ->
     {reply, Reply, State};
 
 handle_call(UnMatchedSignal, From, State) ->
+   ?LOG2_WARNING("Unmatched signal",[UnMatchedSignal]),
     io:format("unmatched_signal ~p~n",[{UnMatchedSignal, From,?MODULE,?LINE}]),
     Reply = {error,[unmatched_signal,UnMatchedSignal, From]},
     {reply, Reply, State}.
@@ -568,6 +569,7 @@ handle_cast({stop}, State) ->
     {stop,normal,ok,State};
 
 handle_cast(UnMatchedSignal, State) ->
+    ?LOG2_WARNING("Unmatched signal",[UnMatchedSignal]),
     io:format("unmatched_signal ~p~n",[{UnMatchedSignal,?MODULE,?LINE}]),
     {noreply, State}.
 
@@ -590,22 +592,24 @@ handle_info(timeout, State) ->
     ApplicationDir=State#state.application_dir,
     Result=try lib_catalog:init(RepoDir,GitPath,ApplicationDir) of
 	       ok->
-		   
-		   ok;
+		    ok;
 	       {error,Reason}->
+		   ?LOG2_WARNING("Init failed",[Reason]),
 		   {error,Reason}
 	   catch
 	       Event:Reason:Stacktrace ->
+		   ?LOG2_WARNING("Init failed",[Event,Reason,Stacktrace]),
 		   {Event,Reason,Stacktrace,?MODULE,?LINE}
 	   end,
     
     spawn(fun()->lib_catalog:start(RepoDir,GitPath,ApplicationDir) end),
-    ?LOG_NOTICE("Result init",[Result]),
+    ?LOG2_NOTICE("Server started",[?MODULE]),
     ?LOG_NOTICE("Server started ",[?MODULE]),
     {noreply, State};
 
 
 handle_info(Info, State) ->
+    ?LOG2_WARNING("Unmatched signal",[Info]),
     io:format("unmatched_signal ~p~n",[{Info,?MODULE,?LINE}]),
     {noreply, State}.
 

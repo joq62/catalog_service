@@ -218,9 +218,11 @@ update_application(FileName,LocalCatalogRepoDir,LocalApplicationDir)->
 		       {error,["RepoDir doesnt exists, need to clone"]}->
 			   GitClone=git_handler:clone(FullRepoDir,GitPath),
 			   ?LOG_NOTICE("No Gitrepo for application - Cloned with result ",[LocalRepoDir,GitClone]),
+			   %% GitClone: ok | {error,Reason}
 			   GitClone;
 		       false ->
 			   GitUpdate=git_handler:update_repo(FullRepoDir),
+			   %% GitClone: {ok,Result} | {error,Reason}
 			   ?LOG_NOTICE("Application Gitrepo not updated - Update repor with result ",[GitUpdate]),
 			   GitUpdate;
 		       true ->
